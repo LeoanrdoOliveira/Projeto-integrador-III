@@ -1,0 +1,51 @@
+{% extends "admin/base_site.html" %}
+<!-- Troque por seu template base se não usar o admin -->
+
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Dashboard - Análises do Asilo</h1>
+
+    <div class="row mb-5 text-center">
+        <div class="col-md-6">
+            <div class="card p-4 shadow">
+                <h4>Total de Pacientes</h4>
+                <h2 class="text-primary">{{ total_pacientes }}</h2>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card p-4 shadow">
+                <h4>Idade Média</h4>
+                <h2 class="text-success">{{ idade_media }} anos</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card p-3">
+                <h4 class="text-center">Distribuição por Faixa Etária</h4>
+                <canvas id="faixaEtariaChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card p-3">
+                <h4 class="text-center">Distribuição por Gênero</h4>
+                <canvas id="generoChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dados escondidos para o JavaScript -->
+<script type="text/json" id="faixas-data" hidden>{{ faixas_etarias_json|safe }}</script>
+<script type="text/json" id="genero-labels" hidden>{{ genero_labels_json|safe }}</script>
+<script type="text/json" id="genero-data" hidden>{{ genero_dados_json|safe }}</script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Nosso JS puro -->
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

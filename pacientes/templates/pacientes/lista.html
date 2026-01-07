@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Pacientes</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        body.dark-mode {
+            background-color: #333;
+            color: #f0f4f8;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        .container.dark-mode {
+            background-color: #444;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1.dark-mode {
+            color: #ecf0f1;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #searchInput {
+            padding: 10px;
+            width: 50%;
+            max-width: 400px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        #searchInput.dark-mode {
+            background-color: #555;
+            border-color: #666;
+            color: #f0f4f8;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        th.dark-mode, td.dark-mode {
+            border-bottom-color: #666;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr.dark-mode:nth-child(even) {
+            background-color: #555;
+        }
+        tr:hover {
+            background-color: #eef2f7;
+        }
+        tr.dark-mode:hover {
+            background-color: #666;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        a:hover {
+            background-color: #2980b9;
+        }
+        a.dark-mode {
+            background-color: #2980b9;
+        }
+        a.dark-mode:hover {
+            background-color: #3498db;
+        }
+        .remove-btn {
+            padding: 6px 12px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+        .remove-btn:hover {
+            background-color: #c0392b;
+        }
+        .remove-btn.dark-mode {
+            background-color: #c0392b;
+        }
+        .remove-btn.dark-mode:hover {
+            background-color: #e74c3c;
+        }
+        .hidden {
+            display: none;
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            padding: 6px 12px;
+            font-size: 0.9em;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            background-color: #2980b9;
+        }
+        .theme-toggle.dark-mode {
+            background-color: #2980b9;
+        }
+        .theme-toggle.dark-mode:hover {
+            background-color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="toggleDarkMode()" class="button theme-toggle">🌞🌙</button>
+    <div class="container">
+        <h1>Lista de Pacientes</h1>
+        
+        <!-- Campo de pesquisa -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Pesquisar por nome ou CPF..." onkeyup="searchTable()">
+        </div>
+
+        <table>
+            <tr>
+                <th>Nome Completo</th>
+                <th>CPF</th>
+                <th>Data de Nascimento</th>
+                <th>Gênero</th>
+                <th>Telefone</th>
+                <th>Email</th>
+                <th>Condição Médica</th>
+                <th>Medicamentos</th>
+                <th>Data de Cadastro</th>
+                <th>Ação</th>
+            </tr>
+            {% for paciente in pacientes %}
+            <tr class="paciente-row">
+                <td>{{ paciente.nome_completo }}</td>
+                <td>{{ paciente.cpf }}</td>
+                <td>{{ paciente.data_nascimento }}</td>
+                <td>{{ paciente.get_genero_display }}</td>
+                <td>{{ paciente.telefone }}</td>
+                <td>{{ paciente.email|default:"Não informado" }}</td>
+                <td>{{ paciente.condicao_medica }}</td>
+                <td>{{ paciente.medicamentos }}</td>
+                <td>{{ paciente.data_cadastro }}</td>
+                <td>
+                    <a href="{% url 'remover_paciente' paciente.id %}" class="remove-btn">Remover</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="10">Nenhum paciente cadastrado</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <div class="button-container">
+            <a href="{% url 'cadastro_paciente' %}">Novo Cadastro</a>
+            <a href="{% url 'home' %}">Voltar para Home</a>
+        </div>
+    </div>
+
+    <!-- Widget de Acessibilidade VLibras -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+
+        function searchTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const rows = document.getElementsByClassName('paciente-row');
+
+            for (let i = 0; i < rows.length; i++) {
+                const nome = rows[i].getElementsByTagName('td')[0].textContent.toLowerCase();
+                const cpf = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase();
+                if (nome.includes(filter) || cpf.includes(filter)) {
+                    rows[i].classList.remove('hidden');
+                } else {
+                    rows[i].classList.add('hidden');
+                }
+            }
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const container = document.querySelector('.container');
+            const h1Elements = document.getElementsByTagName('h1');
+            const pElements = document.getElementsByTagName('p');
+            const buttons = document.getElementsByClassName('button');
+            const removeButtons = document.getElementsByClassName('remove-btn');
+            const searchInput = document.getElementById('searchInput');
+            const tableRows = document.getElementsByTagName('tr');
+            const tableHeaders = document.getElementsByTagName('th');
+            const tableCells = document.getElementsByTagName('td');
+
+            container.classList.toggle('dark-mode');
+            searchInput.classList.toggle('dark-mode');
+            for (let h1 of h1Elements) h1.classList.toggle('dark-mode');
+            for (let p of pElements) p.classList.toggle('dark-mode');
+            for (let button of buttons) button.classList.toggle('dark-mode');
+            for (let removeBtn of removeButtons) removeBtn.classList.toggle('dark-mode');
+            for (let row of tableRows) row.classList.toggle('dark-mode');
+            for (let th of tableHeaders) th.classList.toggle('dark-mode');
+            for (let td of tableCells) td.classList.toggle('dark-mode');
+
+            const themeButton = document.querySelector('.theme-toggle');
+            if (document.body.classList.contains('dark-mode')) {
+                themeButton.textContent = '🌙';
+            } else {
+                themeButton.textContent = '🌞';
+            }
+        }
+    </script>
+</body>
+</html>
