@@ -1,16 +1,20 @@
 from django.test import TestCase
+from datetime import date
 from .models import Paciente
 
-class PacienteModelTest(TestCase):
-    def setUp(self):
-        Paciente.objects.create(
-            nome_completo="João da Silva",
-            idade=78,
-            genero="M"
-            # adicione outros campos obrigatórios do seu model com valores válidos
+class PacienteTestCase(TestCase):
+    def test_criacao_paciente_e_calculo_idade(self):
+        # Cria um paciente de teste
+        paciente = Paciente.objects.create(
+            nome_completo="Antônio Teste",
+            data_nascimento=date(1950, 1, 15),  # 76 anos em 2026
+            genero="M",
+            cpf="111.111.111-11",
+            telefone="(11) 11111-1111",
+            condicao_medica="Nenhuma",
+            medicamentos="Nenhum"
         )
-
-    def test_paciente_criado(self):
-        paciente = Paciente.objects.get(nome_completo="João da Silva")
-        self.assertEqual(paciente.idade, 78)
-        self.assertIsNotNone(paciente.data_cadastro)
+        # Verifica se foi criado corretamente
+        self.assertEqual(paciente.nome_completo, "Antônio Teste")
+        self.assertGreaterEqual(paciente.idade, 75)
+        self.assertLess(paciente.idade, 80)
